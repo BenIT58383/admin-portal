@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, message, Modal, Popconfirm, Space, Table } from "antd";
-import { getAbsenceReasons } from "../api/api";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
+  Col,
+  Row,
+  Table,
+} from "antd";
+
+import { getData, postDataUser } from "../api/api";
+import { v4 as uuidv4 } from "uuid";
 
 function FromList() {
   const [form] = Form.useForm();
@@ -9,20 +20,27 @@ function FromList() {
   const [isModalVisibleAdd, setIsModalVisibleAdd] = useState(false);
 
   useEffect(() => {
-    getAbsenceReasons().then((res) => {
+    getData().then((res) => {
       setData(res);
     });
   }, []);
 
   const onFinish = (value) => {
     console.log(value);
-    message.success('Submit success!');
+    value.id = uuidv4()
+
+    postDataUser(value).then((response) =>{
+      message.success("Thêm dữ liệu thông tin người dùng thành công!");
+    }).catch((eror) =>{
+      message.error("Thêm dữ liệu người dùng thất bại vui lòng xem lại thông tin người dùng !");
+    }).finally(()=>{
+      setIsModalVisibleAdd(false);
+    })
   };
 
   const onFinishFailed = () => {
-    message.error('Submit failed!');
+    message.error("Submit failed!");
   };
-
 
   const handleOnDelete = (value) => {
     console.log(value);
@@ -33,7 +51,7 @@ function FromList() {
   };
 
   const handleOk = () => {
-    onFinish()
+    onFinish();
     setIsModalVisibleAdd(false);
   };
 
@@ -44,33 +62,33 @@ function FromList() {
   const columns = [
     {
       title: "Tên ngân hàng",
-      dataIndex: "Tên ngân hàng",
-      key: "Tên ngân hàng",
+      dataIndex: "bank_name",
+      key: "bank_name",
     },
     {
       title: "Số điện thoại",
-      dataIndex: "Số điện thoại",
-      key: "Số điện thoại",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Họ và tên",
-      dataIndex: "Họ và tên",
-      key: "Họ và tên",
+      dataIndex: "full_name",
+      key: "full_name",
     },
     {
       title: "Chứng minh thư / CCCD",
-      dataIndex: "Chứng minh thư / CCCD",
-      key: "Chứng minh thư / CCCD",
+      dataIndex: "citizen_id",
+      key: "citizen_id",
     },
     {
       title: "Tên tài khoản",
-      dataIndex: "Tên tài khoản",
-      key: "Tên tài khoản",
+      dataIndex: "user_name",
+      key: "user_name",
     },
     {
       title: "Ngày tạo",
-      dataIndex: "Ngày tạo",
-      key: "Ngày tạo",
+      dataIndex: "created_at",
+      key: "created_at",
     },
     {
       title: "",
@@ -97,14 +115,10 @@ function FromList() {
       <Modal
         title="Thêm mới thông tin người dùng"
         visible={isModalVisibleAdd}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okButtonProps={{
-            disabled: true,
-          }}
-          cancelButtonProps={{
-            disabled: true,
-          }}
+        onCancel={() => setIsModalVisibleAdd(false)}
+        footer={true}
+        destroyOnClose={true}
+        width={600}
       >
         <Form
           form={form}
@@ -113,31 +127,90 @@ function FromList() {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-          <Form.Item
-            name="bankName"
-            label="Tên ngân hàng"
-            rules={[{required: true,} ]}
-          >
-            <Input placeholder="Nhập tên ngân hàng" />
-          </Form.Item>
-          <Form.Item
-            name="phone"
-            label="Số điện thoại"
-            rules={[{required: true,} ]}
-          >
-            <Input placeholder="Nhập số điện thoại" />
-          </Form.Item>
-          <Form.Item
-            name="fullName"
-            label="Họ và tên"
-            rules={[{required: true,} ]}
-          >
-            <Input placeholder="Nhập họ và tên" />
-          </Form.Item>
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item
+                name="bank_name"
+                label="Tên ngân hàng"
+                rules={[{ required: true ,
+                  message:"Tên ngân hàng là trường yêu cầu bắt buộc" }]}
+              >
+                <Input placeholder="Nhập tên ngân hàng" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="phone"
+                label="Số điện thoại"
+                rules={[{ required: true ,
+                  message:"Số điện thoại là trường yêu cầu bắt buộc" }]}
+              >
+                <Input type="number" max={10} placeholder="Nhập số điện thoại" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item
+                name="full_name"
+                label="Họ và tên"
+                rules={[{ required: true ,
+                  message:"Họ tên là trường yêu cầu bắt buộc" }]}
+              >
+                <Input placeholder="Nhập họ và tên" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="citizen_id"
+                label="Số CMND/CCCD"
+                rules={[{ required: true ,
+                  message:"Số CMND/CCCD là trường yêu cầu bắt buộc" }]}
+              >
+                <Input maxLength={12} type="number" placeholder="Nhập số chứng minh nhân dân hoặc số căn cước" />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item
+                name="user_name"
+                label="Tên đăng nhập"
+                rules={[{ required: true ,
+                  message:"Tên đăng nhập là trường yêu cầu bắt buộc" }]}
+              >
+                <Input placeholder="Nhập tên đăng nhập của bạn " />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="password"
+                label="Mật khẩu "
+                rules={[{ required: true ,
+                  message:"Mật khẩu là trường yêu cầu bắt buộc" }]}
+              >
+                <Input placeholder="Nhập mật khẩu của bạn" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={12}>
+            <Col span={12}>
+            <Form.Item
+                name="smart_otp"
+                label="Smart Otp"
+                rules={[{ required: true ,
+                  message:"Smart Otp là trường yêu cầu bắt buộc" }]}
+              >
+                <Input placeholder="Nhập smart otp của bạn" />
+              </Form.Item>
+              </Col>
+          </Row>
+
           <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Tạo mới
-              </Button>
+            <Button type="primary" htmlType="submit">
+              Tạo mới
+            </Button>
           </Form.Item>
         </Form>
       </Modal>
