@@ -145,7 +145,7 @@ function FromList() {
                 rules={[{ required: true ,
                   message:"Số điện thoại là trường yêu cầu bắt buộc" }]}
               >
-                <Input type="number" max={10} placeholder="Nhập số điện thoại" />
+                <Input type="number" placeholder="Nhập số điện thoại" />
               </Form.Item>
             </Col>
           </Row>
@@ -167,7 +167,7 @@ function FromList() {
                 rules={[{ required: true ,
                   message:"Số CMND/CCCD là trường yêu cầu bắt buộc" }]}
               >
-                <Input maxLength={12} type="number" placeholder="Nhập số chứng minh nhân dân hoặc số căn cước" />
+                <Input type="number" placeholder="Nhập số chứng minh nhân dân hoặc số căn cước" />
               </Form.Item>
             </Col>
           </Row>
