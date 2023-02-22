@@ -24,6 +24,9 @@ function FromList() {
             message.error("Thêm dữ liệu người dùng thất bại vui lòng xem lại thông tin người dùng !");
         }).finally(() => {
             setIsModalVisibleAdd(false);
+            getData().then((res) => {
+                setData(res);
+            });
         })
     };
 
