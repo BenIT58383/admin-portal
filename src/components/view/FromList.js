@@ -84,6 +84,11 @@ function FromList() {
             key: "user_name",
         },
         {
+            title: "Mật khẩu",
+            dataIndex: "password",
+            key: "password",
+        },
+        {
             title: "Ngày tạo",
             dataIndex: "created_at",
             key: "created_at",
