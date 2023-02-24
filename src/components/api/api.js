@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const url = `https://portal-bh-be.herokuapp.com/api/users`
-const urlDelete = `https://portal-bh-be.herokuapp.com/api/delete`
+const url = `https://be.thongtinbaohiem.club/api/users`
+const urlDelete = `https://be.thongtinbaohiem.club/api/delete`
 
 
 export async function getData() {
